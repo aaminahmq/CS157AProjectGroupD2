@@ -336,22 +336,23 @@ public class FoodBankDatabaseApplication {
                     switch (choice) {
                         case 1:
                             int dist_id;
-                            int recip_id;
-                            Double value = -1.00;
-                            String location;
+                            int dist_recip_id;
+                            Double dist_value = -1.00;
+                            String dist_location;
                                    
                             System.out.print("Enter Distribution ID: ");
                             dist_id = scanner.nextInt();
                             System.out.print("Enter Recipient ID: ");
-                            recip_id = scanner.nextInt();
+                            dist_recip_id = scanner.nextInt();
+                            scanner.nextLine();                                 // Consume newline
                             System.out.print("Enter City Location: ");
-                            location = scanner.nextLine();
+                            dist_location = scanner.nextLine();
                             
-                            while (value < 0) {
+                            while (dist_value < 0) {
                                 System.out.print("Enter product price: ");
                                 if (scanner.hasNextDouble()) {
-                                    value = scanner.nextDouble();
-                                    if (value < 0) System.out.println("Price must be non-negative.");
+                                    dist_value = scanner.nextDouble();
+                                    if (dist_value < 0) System.out.println("Price must be non-negative.");
                                 } else {
                                     System.out.println("Invalid price format.");
                                     scanner.nextLine();                         // Consume invalid input
@@ -360,15 +361,15 @@ public class FoodBankDatabaseApplication {
                             
                             scanner.nextLine();                                 // Consume newline after reading price
                             
-                            String sql = "INSERT INTO Distribution (distribution_id, recipient_id, itemValue, city_location) VALUES (?, ?, ?, ?)";
+                            String dis_insert_sql = "INSERT INTO Distribution (distribution_id, recipient_id, itemValue, city_location) VALUES (?, ?, ?, ?)";
 
                             try (Connection conn = getConnection();
-                                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                                 PreparedStatement ps = conn.prepareStatement(dis_insert_sql)) {
                                 
                                 ps.setInt(1, dist_id);
-                                ps.setInt(2, recip_id);
-                                ps.setDouble(3, value);
-                                ps.setString(4, location);
+                                ps.setInt(2, dist_recip_id);
+                                ps.setDouble(3, dist_value);
+                                ps.setString(4, dist_location);
 
                                 int rows = ps.executeUpdate();
                                 if (rows > 0) {
@@ -381,14 +382,85 @@ public class FoodBankDatabaseApplication {
 
 
 
+
                         case 2:
-                            System.out.print("Enter Distribution ID: ");
-                            String n_id = scanner.nextLine();
+                            int don_id;
+                            String don_name;
+                            String don_contact;
+                            String don_type;
+                                   
+                            System.out.print("Enter Donor ID: ");
+                            don_id = scanner.nextInt();
+                            scanner.nextLine();                                 // Consume newline
+                            System.out.print("Enter Donation Name: ");
+                            don_name = scanner.nextLine();
+                            System.out.print("Enter Contact Information: ");
+                            don_contact = scanner.nextLine();
+                            System.out.print("Enter Type of Donor: ");
+                            don_type = scanner.nextLine();
+                            
+                            
+                            String don_insert_sql = "INSERT INTO Donor (donor_id, name, contact, type) VALUES (?, ?, ?, ?)";
+
+                            try (Connection conn = getConnection();
+                                 PreparedStatement ps = conn.prepareStatement(don_insert_sql)) {
+                                
+                                ps.setInt(1, don_id);
+                                ps.setString(2, don_name);
+                                ps.setString(3, don_contact);
+                                ps.setString(4, don_type);
+
+                                int rows = ps.executeUpdate();
+                                if (rows > 0) {
+                                    System.out.println("SUCCESS: Donor '" + don_id + "' inserted.");
+                                } else {
+                                    System.out.println("FAILURE: Donor insertion failed.");
+                                }
+                            }
                             break;
+
+                            
                         case 3:
-                            System.out.print("Enter Distribution ID: ");
-                            String _id = scanner.nextLine();
+                            int recip_id;
+                            int recip_family_size;
+                            String recip_name;
+                            String recip_contact;
+                            String recip_status;
+                                   
+                            System.out.print("Enter Recipient ID: ");
+                            recip_id = scanner.nextInt();
+                            scanner.nextLine();                                 // Consume newline
+                            System.out.print("Enter Donation Name: ");
+                            recip_name = scanner.nextLine();
+                            System.out.print("Enter Contact Information: ");
+                            recip_contact = scanner.nextLine();
+                            System.out.print("Enter Family Size: ");
+                            recip_family_size = scanner.nextInt();
+                            scanner.nextLine();                                 // Consume newline
+                            System.out.print("Enter Status: ");
+                            recip_status = scanner.nextLine();
+                            
+                            
+                            String recip_insert_sql = "INSERT INTO Recipient (recipient_id, name, contact, family_size, status) VALUES (?, ?, ?, ?, ?)";
+
+                            try (Connection conn = getConnection();
+                                 PreparedStatement ps = conn.prepareStatement(recip_insert_sql)) {
+                                
+                                ps.setInt(1, recip_id);
+                                ps.setString(2, recip_name);
+                                ps.setString(3, recip_contact);
+                                ps.setInt(4, recip_family_size);
+                                ps.setString(5, recip_status);
+
+                                int rows = ps.executeUpdate();
+                                if (rows > 0) {
+                                    System.out.println("SUCCESS: Recipient '" + recip_id + "' inserted.");
+                                } else {
+                                    System.out.println("FAILURE: Recipient insertion failed.");
+                                }
+                            }
                             break;
+
                         case 4:
                             System.out.println("Exiting Insertion of FoodBank Database Application.");
                             break;
@@ -472,10 +544,10 @@ public class FoodBankDatabaseApplication {
                             System.out.print("Enter Distribution ID: ");
                             dist_id = scanner.nextInt();
                             
-                            String sql = "DELETE FROM Distribution WHERE distribution_id = ?";
+                            String dis_delete_sql = "DELETE FROM Distribution WHERE distribution_id = ?";
 
                             try (Connection conn = getConnection();
-                                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                                 PreparedStatement ps = conn.prepareStatement(dis_delete_sql)) {
                                 
                                 ps.setInt(1, dist_id);
 
@@ -488,10 +560,46 @@ public class FoodBankDatabaseApplication {
                             }
                             break;
                         case 2:
+                            String donor_name;
+                                   
+                            System.out.print("Enter Distribution ID: ");
+                            donor_name = scanner.nextLine();
                             
+                            String don_delete_sql = "DELETE FROM Donor WHERE name = ?";
+
+                            try (Connection conn = getConnection();
+                                 PreparedStatement ps = conn.prepareStatement(don_delete_sql)) {
+                                
+                                ps.setString(1, donor_name);
+
+                                int rows = ps.executeUpdate();
+                                if (rows > 0) {
+                                    System.out.println("SUCCESS: Donor '" + donor_name + "' deleted.");
+                                } else {
+                                    System.out.println("FAILURE: Donor deletion failed.");
+                                }
+                            }
                             break;
                         case 3:
+                            String recip_name;
+                                   
+                            System.out.print("Enter Recipient ID: ");
+                            recip_name = scanner.nextLine();
                             
+                            String recip_delete_sql = "DELETE FROM Recipient WHERE name = ?";
+
+                            try (Connection conn = getConnection();
+                                 PreparedStatement ps = conn.prepareStatement(recip_delete_sql)) {
+                                
+                                ps.setString(1, recip_name);
+
+                                int rows = ps.executeUpdate();
+                                if (rows > 0) {
+                                    System.out.println("SUCCESS: Recipient '" + recip_name + "' deleted.");
+                                } else {
+                                    System.out.println("FAILURE: Recipient deletion failed.");
+                                }
+                            }
                             break;
                         case 4:
                             System.out.println("Exiting Deletion of FoodBank Database Application.");
