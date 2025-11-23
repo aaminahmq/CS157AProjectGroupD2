@@ -87,3 +87,53 @@ CREATE TABLE Works (
   FOREIGN KEY (distribution_id) REFERENCES Distribution(distribution_id)
     ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+-- ===========================
+-- CONSTRAINTS FOR PHASE C
+-- ===========================
+
+-- ---- DONOR ----
+ALTER TABLE Donor
+    ADD CONSTRAINT chk_donor_contact CHECK (contact_info LIKE '%@%'),
+ADD CONSTRAINT unq_donor UNIQUE (name, contact_info);
+
+-- ---- RECIPIENT ----
+ALTER TABLE Recipient
+    ADD CONSTRAINT chk_recipient_contact CHECK (contact_info LIKE '%@%'),
+ADD CONSTRAINT unq_recipient UNIQUE (name, contact_info);
+
+-- ---- FOOD ITEM ----
+ALTER TABLE FoodItem
+    ADD CONSTRAINT chk_unit_value CHECK (unit_value >= 0),
+ADD CONSTRAINT chk_food_category CHECK (category IN ('Canned', 'Fresh', 'Frozen', 'Dry Goods', 'Meals', 'Other'));
+
+-- ---- INVENTORY ----
+ALTER TABLE Inventory
+    ADD CONSTRAINT fk_inventory_food FOREIGN KEY (food_id) REFERENCES FoodItem(food_id),
+ADD CONSTRAINT chk_quantity CHECK (quantity >= 0),
+ADD CONSTRAINT chk_inventory_value CHECK (itemValue >= 0),
+ADD CONSTRAINT chk_inventory_category CHECK (category IN ('Canned', 'Fresh', 'Frozen', 'Dry Goods', 'Meals', 'Other'));
+
+-- ---- DONATION ----
+ALTER TABLE Donation
+    ADD CONSTRAINT fk_donation_donor FOREIGN KEY (donor_id) REFERENCES Donor(donor_id),
+ADD CONSTRAINT fk_donation_food FOREIGN KEY (food_id) REFERENCES FoodItem(food_id),
+ADD CONSTRAINT chk_donation_value CHECK (itemValue >= 0),
+ADD CONSTRAINT chk_donation_date CHECK (date_received <= CURDATE());
+
+-- ---- DISTRIBUTION ----
+ALTER TABLE Distribution
+    ADD CONSTRAINT fk_distribution_recipient FOREIGN KEY (recipient_id) REFERENCES Recipient(recipient_id),
+ADD CONSTRAINT fk_distribution_inventory FOREIGN KEY (inventory_id) REFERENCES Inventory(inventory_id),
+ADD CONSTRAINT chk_distribution_value CHECK (itemValue >= 0),
+ADD CONSTRAINT chk_distribution_date CHECK (distribution_date <= CURDATE());
+
+-- ---- SUPPLIES ----
+ALTER TABLE Supplies
+    ADD CONSTRAINT chk_supplies_category CHECK (category IN ('Canned', 'Fresh', 'Frozen', 'Dry Goods', 'Meals', 'Other')),
+ADD CONSTRAINT chk_supplies_value CHECK (value >= 0);
+
+-- ---- WORKS ----
+ALTER TABLE Works
+    ADD CONSTRAINT fk_works_volunteer FOREIGN KEY (volunteer_id) REFERENCES Volunteer(volunteer_id),
+ADD CONSTRAINT fk_works_distribution FOREIGN KEY (distribution_id) REFERENCES Distribution(distribution_id);
