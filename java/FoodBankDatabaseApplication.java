@@ -33,11 +33,9 @@ public class FoodBankDatabaseApplication {
             throw new SQLException("Missing db.url or db.user in app.properties");
         }
 
-        // DriverManager mysql-connector-j
+        // JDBC driver is on the classpath (mysql-connector-j)
         return DriverManager.getConnection(url, user, password);
     }
-
-
 
     public static void main(String[] args) {
         displayMenu();
@@ -86,7 +84,6 @@ public class FoodBankDatabaseApplication {
                             System.out.println("Invalid choice. Please try again.");
                     }
                 } catch (SQLException e) {
-                    e.printStackTrace();
                     System.out.println("SQL Error during operation: " + e.getMessage() + "\n");
                 }
             } else {
@@ -362,6 +359,10 @@ public class FoodBankDatabaseApplication {
 
                             System.out.print("Enter City Location: ");
                             String city = scanner.nextLine().trim();
+                            if (city.isEmpty()) {
+                                System.out.println("City cannot be empty.");
+                                break;
+                            }
 
                             double value = -1.0;
                             while (value < 0) {
@@ -399,6 +400,10 @@ public class FoodBankDatabaseApplication {
                         case 2: { // Insert Donor
                             System.out.print("Enter Donor Name: ");
                             String name = scanner.nextLine().trim();
+                            if (name.isEmpty()) {
+                                System.out.println("Name cannot be empty.");
+                                break;
+                            }
 
                             System.out.print("Enter Contact Information: ");
                             String contact = scanner.nextLine().trim();
@@ -432,6 +437,10 @@ public class FoodBankDatabaseApplication {
                         case 3: { // Insert Recipient
                             System.out.print("Enter Recipient Name: ");
                             String name = scanner.nextLine().trim();
+                            if (name.isEmpty()) {
+                                System.out.println("Name cannot be empty.");
+                                break;
+                            }
 
                             System.out.print("Enter Contact Information: ");
                             String contact = scanner.nextLine().trim();
@@ -444,6 +453,10 @@ public class FoodBankDatabaseApplication {
                             }
                             int familySize = scanner.nextInt();
                             scanner.nextLine();
+                            if (familySize < 0) {
+                                System.out.println("Family size must be >= 0.");
+                                break;
+                            }
 
                             System.out.print("Enter Status (active/paused): ");
                             String status = scanner.nextLine().trim().toLowerCase();
@@ -556,6 +569,10 @@ public class FoodBankDatabaseApplication {
         if (opt == 1) {
             System.out.print("Enter new city location: ");
             String city = scanner.nextLine().trim();
+            if (city.isEmpty()) {
+                System.out.println("City cannot be empty.");
+                return;
+            }
             sql = "UPDATE Distribution SET city_location = ? WHERE distribution_id = ?";
             try (Connection conn = getConnection();
                  PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -794,14 +811,12 @@ public class FoodBankDatabaseApplication {
                             if (!rs.next()) {
                                 System.out.println("Recipient not found.");
                                 conn.rollback();
-                                conn.setAutoCommit(oldAutoCommit);
                                 return;
                             }
                             String status = rs.getString("status");
                             if (!"active".equalsIgnoreCase(status)) {
                                 System.out.println("Recipient is not active. Rolling back.");
                                 conn.rollback();
-                                conn.setAutoCommit(oldAutoCommit);
                                 return;
                             }
                         }
@@ -819,7 +834,6 @@ public class FoodBankDatabaseApplication {
                             if (!rs.next()) {
                                 System.out.println("Food item not found for given inventory.");
                                 conn.rollback();
-                                conn.setAutoCommit(oldAutoCommit);
                                 return;
                             }
                             currentQty = rs.getInt("quantity");
@@ -830,7 +844,6 @@ public class FoodBankDatabaseApplication {
                         System.out.println("Not enough quantity in inventory. Current = "
                                 + currentQty + ", requested = " + qty);
                         conn.rollback(); // demonstrate ROLLBACK
-                        conn.setAutoCommit(oldAutoCommit);
                         return;
                     }
 
@@ -858,7 +871,6 @@ public class FoodBankDatabaseApplication {
 
                     // 5. Commit
                     conn.commit();
-                    conn.setAutoCommit(oldAutoCommit);
                     System.out.println("Transaction committed successfully.");
 
                 } catch (SQLException e) {
@@ -869,7 +881,8 @@ public class FoodBankDatabaseApplication {
                     } catch (SQLException ex) {
                         System.out.println("Error rolling back: " + ex.getMessage());
                     }
-                    conn.setAutoCommit(true);
+                } finally {
+                    conn.setAutoCommit(oldAutoCommit);
                 }
             }
 
