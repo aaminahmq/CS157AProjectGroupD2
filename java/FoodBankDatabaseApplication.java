@@ -405,7 +405,7 @@ public class FoodBankDatabaseApplication {
                                 break;
                             }
 
-                            System.out.print("Enter Contact Information: ");
+                            System.out.print("Enter Contact Email: ");
                             String contact = scanner.nextLine().trim();
 
                             System.out.print("Enter Type of Donor (individual/organization): ");
@@ -442,7 +442,7 @@ public class FoodBankDatabaseApplication {
                                 break;
                             }
 
-                            System.out.print("Enter Contact Information: ");
+                            System.out.print("Enter Contact Email: ");
                             String contact = scanner.nextLine().trim();
 
                             System.out.print("Enter Family Size: ");
@@ -507,7 +507,7 @@ public class FoodBankDatabaseApplication {
         while (choice != 4) {
             System.out.println("\n * - * - UPDATE FOODBANK DATABASE * - * -\n");
             System.out.println("1. UPDATE DISTRIBUTION (city/itemValue)");
-            System.out.println("2. UPDATE DONOR CONTACT INFO");
+            System.out.println("2. UPDATE DONOR " + getContact() + " INFO");
             System.out.println("3. UPDATE RECIPIENT STATUS");
             System.out.println("4. EXIT");
             System.out.print("Enter choice: ");
@@ -540,6 +540,10 @@ public class FoodBankDatabaseApplication {
                 scanner.nextLine(); // Consume invalid input
             }
         }
+    }
+
+    private static String getContact() {
+        return "CONTACT";
     }
 
     private static void updateDistribution() throws SQLException {
@@ -617,7 +621,7 @@ public class FoodBankDatabaseApplication {
         int donorId = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.print("Enter new contact info: ");
+        System.out.print("Enter new contact email: ");
         String contact = scanner.nextLine().trim();
 
         String sql = "UPDATE Donor SET contact_info = ? WHERE donor_id = ?";
