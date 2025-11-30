@@ -501,49 +501,6 @@ public class FoodBankDatabaseApplication {
         }
     }
 
-    // 3. UPDATE DATA FROM FOOD BANK DATABASE
-    /*
-    private static void updateData() throws SQLException {
-        int choice = -1;
-        while (choice != 4) {
-            System.out.println("\n * - * - UPDATE FOODBANK DATABASE * - * -\n");
-            System.out.println("1. UPDATE DISTRIBUTION (city/itemValue)");
-            System.out.println("2. UPDATE DONOR " + getContact() + " INFO");
-            System.out.println("3. UPDATE RECIPIENT STATUS");
-            System.out.println("4. EXIT");
-            System.out.print("Enter choice: ");
-
-            if (scanner.hasNextInt()) {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-                try {
-                    switch (choice) {
-                        case 1:
-                            updateDistribution();
-                            break;
-                        case 2:
-                            updateDonorContact();
-                            break;
-                        case 3:
-                            updateRecipientStatus();
-                            break;
-                        case 4:
-                            System.out.println("Exiting update menu.");
-                            break;
-                        default:
-                            System.out.println("Invalid choice. Please try again.");
-                    }
-                } catch (SQLException e) {
-                    System.out.println("SQL Error during operation: " + e.getMessage() + "\n");
-                }
-            } else {
-                System.out.println("Invalid input. Please enter a number.");
-                scanner.nextLine(); // Consume invalid input
-            }
-        }
-    }
-
-     */
 
     private static void updateData() throws SQLException {
         int choice = -1;
