@@ -502,6 +502,7 @@ public class FoodBankDatabaseApplication {
     }
 
     // 3. UPDATE DATA FROM FOOD BANK DATABASE
+    /*
     private static void updateData() throws SQLException {
         int choice = -1;
         while (choice != 4) {
@@ -541,6 +542,54 @@ public class FoodBankDatabaseApplication {
             }
         }
     }
+
+     */
+
+    private static void updateData() throws SQLException {
+        int choice = -1;
+        while (choice != 5) {
+            System.out.println("\n * - * - UPDATE FOODBANK DATABASE * - * -\n");
+            System.out.println("1. UPDATE DISTRIBUTION (city/itemValue)");
+            System.out.println("2. UPDATE DONOR " + getContact() + " INFO");
+            System.out.println("3. UPDATE RECIPIENT STATUS");
+            System.out.println("4. UPDATE RECIPIENT CONTACT EMAIL");
+            System.out.println("5. EXIT");
+            System.out.print("Enter choice: ");
+
+            if (scanner.hasNextInt()) {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                try {
+                    switch (choice) {
+                        case 1:
+                            updateDistribution();
+                            break;
+                        case 2:
+                            updateDonorContact();
+                            break;
+                        case 3:
+                            updateRecipientStatus();
+                            break;
+                        case 4:
+                            updateRecipientContactEmail();
+                            break;
+                        case 5:
+                            System.out.println("Exiting update menu.");
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                    }
+                } catch (SQLException e) {
+                    System.out.println("SQL Error during operation: " + e.getMessage() + "\n");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.nextLine(); // Consume invalid input
+            }
+        }
+    }
+
+
 
     private static String getContact() {
         return "CONTACT";
@@ -670,6 +719,48 @@ public class FoodBankDatabaseApplication {
             }
         }
     }
+
+    private static void updateRecipientContactEmail() throws SQLException {
+        System.out.print("Enter Recipient ID to update: ");
+        if (!scanner.hasNextInt()) {
+            System.out.println("Invalid ID. Must be a number.");
+            scanner.nextLine();
+            return;
+        }
+        int recipId = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        System.out.print("Enter new contact email (must contain '@'): ");
+        String contact = scanner.nextLine().trim();
+
+        // simple validation so user does not type a phone number
+        while (!contact.contains("@")) {
+            System.out.println("Invalid email format. Please enter a valid email address with '@'.");
+            System.out.print("Enter new contact email: ");
+            contact = scanner.nextLine().trim();
+        }
+
+        String sql = "UPDATE Recipient SET contact_info = ? WHERE recipient_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, contact);
+            ps.setInt(2, recipId);
+
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                System.out.println("SUCCESS: Recipient contact email updated.");
+            } else {
+                System.out.println("No recipient found with that ID.");
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error while updating recipient contact email: " + e.getMessage());
+        }
+    }
+
+
+
 
     // 4. DELETE DATA FROM FOOD BANK DATABASE
     private static void deleteData() throws SQLException {
