@@ -68,6 +68,53 @@ The View menu allows listing rows from tables such as Distribution, Donation, Do
 4. Implemented menu driven operations for selecting, inserting, updating and deleting records
 5. Added input validation including contact email format checks
 6. Tested the program with various data scenarios to match Phase C requirements including constraints, view behavior and stored procedure behavior
+
+## Input Validation & Error Handling (Phase C Requirement)
+
+The application includes full input validation and SQL exception handling.
+
+1. Invalid numeric input
+```
+Enter Recipient ID:
+abc
+Invalid recipient ID.
+```
+
+2. Negative value rejected
+```
+Enter distribution value (>= 0): -10
+Value must be non-negative.
+```
+
+3. Invalid donor type
+```
+Enter Type of Donor: friend
+Invalid donor type. Must be 'individual' or 'organization'.
+```
+
+4. Invalid email format
+```
+Enter new contact email: 4081234567
+Invalid email format. Please enter a valid email address with '@'.
+```
+
+5. SQL constraint violation caught
+```
+SQL Error during operation: Cannot delete or update a parent row...
+```
+
+6. Transaction rollback — insufficient quantity
+```
+Not enough quantity in inventory.
+Transaction rolled back.
+```
+
+7. Transaction rollback — paused recipient
+```
+Recipient is not active. Rolling back.
+```
+
+These validations ensure no invalid data enters the database and all SQL errors are safely handled.
  
 
 ## console Screenshots 
